@@ -6,6 +6,9 @@ import base64
 app = Flask(__name__)
 
 @app.route("/sesle-oku", methods=["GET", "POST"])
+@app.route('/')
+def index():
+    return "Merhaba, Sesle Oku uygulamasına hoş geldiniz!"
 def sesle_oku():
     # Ana programdan gelen paragrafı al
     paragraph = request.args.get("paragraph", "This is a test paragraph. Please read it aloud.")
