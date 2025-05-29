@@ -12,14 +12,12 @@ def index():
 @app.route("/sesle-oku", methods=["GET", "POST"])
 def sesle_oku():
     try:
-        # Ana programdan gelen paragrafı al
         paragraph = request.args.get("paragraph", "This is a test paragraph. Please read it aloud.")
-        return_url = request.args.get("return_url", "/")  # Ana programa geri dönüş URL'si
+        return_url = request.args.get("return_url", "/")
 
         if request.method == "POST":
             audio_data = request.form.get("audio_data")
             if audio_data:
-                # Ses dosyasını işle
                 audio_bytes = base64.b64decode(audio_data)
                 audio_file = io.BytesIO(audio_bytes)
 
@@ -28,7 +26,6 @@ def sesle_oku():
                     audio = recognizer.record(source)
                     try:
                         text = recognizer.recognize_google(audio, language="en-US")
-                        # Tanınan metni ana programa geri gönder
                         return_url_with_text = f"{return_url}?spoken_text={text.replace(' ', '%20')}"
                         return f"""
                             <script>
@@ -40,7 +37,6 @@ def sesle_oku():
                     except sr.RequestError as e:
                         return f"Hata: {e}"
 
-        # GET isteği: Ses kaydı ekranını göster
         return render_template_string("""
             <h1>Sesle Oku</h1>
             <p><b>Paragraf:</b> {{ paragraph }}</p>
@@ -68,11 +64,9 @@ def sesle_oku():
                         mediaRecorder = new MediaRecorder(stream);
                         mediaRecorder.start();
                         audioChunks = [];
-                        
                         mediaRecorder.addEventListener("dataavailable", event => {{
                             audioChunks.push(event.data);
                         }});
-                        
                         mediaRecorder.addEventListener("stop", () => {{
                             const audioBlob = new Blob(audioChunks, {{ type: "audio/wav" }});
                             const reader = new FileReader();
@@ -91,13 +85,11 @@ def sesle_oku():
                                 form.submit();
                             }};
                         }});
-                        
                         document.getElementById("stopButton").disabled = false;
                     }} catch (err) {{
                         alert("Mikrofon erişimi engellendi: " + err);
                     }}
                 }}
-                
                 function stopRecording() {{
                     mediaRecorder.stop();
                     document.getElementById("stopButton").disabled = true;
