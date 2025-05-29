@@ -47,7 +47,7 @@ def sesle_oku():
                 }}, 3000);
             </script>
             <div id="konus" style="display:none;">
-                <p>🎙️ <b>Konuş</b></p>
+                <p><b>konus</b></p>
             </div>
             <div id="buttons" style="display:none;">
                 <button onclick="startRecording()">Kaydı Başlat</button>
