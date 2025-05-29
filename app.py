@@ -104,6 +104,5 @@ def sesle_oku():
         </script>
     """, paragraph=paragraph, return_url=return_url)
 
-
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
