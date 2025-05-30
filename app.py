@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Merhaba, Sesle Oku uygulamasına hoş geldiniz! Ses tanıma için <a href='/sesle-oku'> Sor</a>"
+    return "Merhaba, Sesle Oku uygulamasına hoş geldiniz! Ses tanıma için <a href='/sesle-oku'>Sor</a>"
 
 @app.route("/sesle-oku", methods=["GET", "POST"])
 def sesle_oku():
