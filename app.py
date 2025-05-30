@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, redirect
 import speech_recognition as sr
 import io
 import base64
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Merhaba, Sesle Oku uygulamasına hoş geldiniz! Ses tanıma için <a href='/sesle-oku'>buraya tıklayın</a>."
+    return "Merhaba, Sesle Oku uygulamasına hoş geldiniz! Ses tanıma için <a href='/sesle-oku'> Sor</a>"
 
 @app.route("/sesle-oku", methods=["GET", "POST"])
 def sesle_oku():
@@ -27,11 +27,7 @@ def sesle_oku():
                     try:
                         text = recognizer.recognize_google(audio, language="en-US")
                         return_url_with_text = f"{return_url}?spoken_text={text.replace(' ', '%20')}"
-                        return f"""
-                            <script>
-                                window.location.href = "{return_url_with_text}";
-                            </script>
-                        """
+                        return redirect(return_url_with_text)  # JavaScript yerine redirect
                     except sr.UnknownValueError:
                         return "Ses anlaşılamadı."
                     except sr.RequestError as e:
@@ -51,7 +47,7 @@ def sesle_oku():
             </div>
             <div id="buttons" style="display:none;">
                 <button onclick="startRecording()">Kaydı Başlat</button>
-                <button onclick="stopRecording()" disabled id="stopButton">Kaydı Durdur</button>
+                <button onclick="stopRecording()" disabled id="stopButton">Kaydet</button>
             </div>
             <audio id="audioPlayback" controls style="display:none;"></audio>
             <script>
@@ -83,11 +79,11 @@ def sesle_oku():
                                 form.appendChild(input);
                                 document.body.appendChild(form);
                                 form.submit();
-                            }};
+                            }});
                         }});
                         document.getElementById("stopButton").disabled = false;
                     }} catch (err) {{
-                        alert("Mikrofon erişimi engellendi: " + err);
+                        alert("Hata oluştu: " + err);
                     }}
                 }}
                 function stopRecording() {{
@@ -100,4 +96,4 @@ def sesle_oku():
         return f"Error: {str(e)}", 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=5000)
