@@ -1,7 +1,8 @@
 streamlit
 gTTS
-deep-translator
 python-docx
 pronouncing
+deep-translator
+
 
 
