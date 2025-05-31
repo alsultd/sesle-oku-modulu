@@ -3,6 +3,5 @@ gTTS
 python-docx
 pronouncing
 deep-translator
-
-
+torch==2.0.0
 
