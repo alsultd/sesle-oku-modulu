@@ -4,6 +4,7 @@ import difflib
 import random
 import streamlit as st
 import os
+import time
 from deep_translator import GoogleTranslator
 import pronouncing
 from gtts import gTTS
@@ -60,7 +61,16 @@ def evaluate_speech(original, spoken):
     missing_words = [word for word in original_words if word not in spoken_words]
     return error_rate, extra_words, missing_words
 
+_last_tts_time = 0
+
 def read_paragraph(paragraph):
+    global _last_tts_time
+    current_time = time.time()
+    if current_time - _last_tts_time < 10:
+        st.warning("Sesli oynatma işlemi çok sık tekrarlandı. Lütfen birkaç saniye bekleyin.")
+        return
+
+    _last_tts_time = current_time
     clean_text = " ".join(paragraph.splitlines()).replace('"', '').replace("'", "").replace('{', '').replace('}', '')
     try:
         tts = gTTS(text=clean_text, lang='en', slow=False)
@@ -220,4 +230,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
