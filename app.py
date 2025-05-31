@@ -7,8 +7,9 @@ import os
 import time
 from deep_translator import GoogleTranslator
 import pronouncing
-from gtts import gTTS
 import base64
+import torch
+from TTS.api import TTS
 
 # Sabitler
 ERROR_THRESHOLD = 0.3
@@ -70,17 +71,16 @@ def read_paragraph(paragraph):
 
     st.session_state["last_tts_time"] = current_time
 
-    clean_text = " ".join(paragraph.splitlines()).replace('"', '').replace("'", "").replace('{', '').replace('}', '')
     try:
-        tts = gTTS(text=clean_text, lang='en', slow=False)
-        audio_file = "temp_audio.mp3"
-        tts.save(audio_file)
-        with open(audio_file, "rb") as audio_file_obj:
-            audio_base64 = base64.b64encode(audio_file_obj.read()).decode('utf-8')
-        os.remove(audio_file)
+        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=torch.cuda.is_available())
+        audio_path = "temp_output.wav"
+        tts.tts_to_file(text=paragraph, file_path=audio_path)
+        with open(audio_path, "rb") as audio_file:
+            audio_base64 = base64.b64encode(audio_file.read()).decode("utf-8")
+        os.remove(audio_path)
         audio_html = f"""
         <audio controls autoplay>
-            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+            <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
             Tarayıcınız ses oynatmayı desteklemiyor.
         </audio>
         """
@@ -90,19 +90,21 @@ def read_paragraph(paragraph):
 
 def play_word(word):
     try:
-        tts = gTTS(text=word, lang='en', slow=True)
-        audio_file = "temp_word_audio.mp3"
-        tts.save(audio_file)
-        with open(audio_file, "rb") as audio_file_obj:
-            audio_base64 = base64.b64encode(audio_file_obj.read()).decode('utf-8')
-        os.remove(audio_file)
-        audio_html = f"""
-        <audio controls autoplay>
-            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-            Tarayıcınız ses oynatmayı desteklemiyor.
-        </audio>
-        """
-        st.markdown(audio_html, unsafe_allow_html=True)
+        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=torch.cuda.is_available())
+        audio_path = "temp_word.wav"
+        tts.tts_to_file(text=word, file_path=audio_path)
+        with open(audio_path, "rb") as audio_file:
+            audio_base64 = base64.b64encode(audio_file.read()).decode("utf-8")
+        os.remove(audio_path)
+        #audio_html = f"""
+        #<audio controls autoplay>
+        #    <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
+        #    Tarayıcınız ses oynatmayı desteklemiyor.
+        #</audio>
+        #"""
+        #st.markdown(audio_html, unsafe_allow_html=True)
+        st.audio(audio_path, format="audio/wav")
+
     except Exception as e:
         st.error(f"Telaffuz oynatılamadı: {e}")
 
@@ -229,6 +231,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
