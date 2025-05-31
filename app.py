@@ -8,7 +8,6 @@ from deep_translator import GoogleTranslator
 import pronouncing
 from gtts import gTTS
 import base64
-from streamlit_speech_to_text import speech_to_text
 
 # Sabitler
 ERROR_THRESHOLD = 0.3
@@ -62,7 +61,7 @@ def evaluate_speech(original, spoken):
     return error_rate, extra_words, missing_words
 
 def read_paragraph(paragraph):
-    clean_text = " ".join(paragraph.splitlines()).replace('\"', '').replace("'", "").replace('{', '').replace('}', '')
+    clean_text = " ".join(paragraph.splitlines()).replace('"', '').replace("'", "").replace('{', '').replace('}', '')
     try:
         tts = gTTS(text=clean_text, lang='en', slow=False)
         audio_file = "temp_audio.mp3"
@@ -196,26 +195,6 @@ def main():
             if st.button("Paragrafı Oku"):
                 read_paragraph(paragraphs[current_index])
 
-        st.markdown("### 🎤 Şimdi bu paragrafı sesli okuyun")
-        spoken_text = speech_to_text(language="en-US", use_container_width=True)
-
-        if spoken_text:
-            st.session_state["spoken_text"] = spoken_text
-            st.success("🔍 Konuşmanız metne dönüştürüldü!")
-            st.write(f"🗣️ **Siz söylediniz:** {spoken_text}")
-
-            if st.button("Analizi Yap"):
-                error_rate, extra_words, missing_words = evaluate_speech(paragraphs[current_index], spoken_text)
-                if error_rate < ERROR_THRESHOLD:
-                    st.balloons()
-                    st.success("Harika! Okumanız oldukça iyi.")
-                else:
-                    st.warning("Bazı hatalar var. Aşağıdaki raporu inceleyin.")
-                report_errors(error_rate, extra_words, missing_words)
-                st.write("**Karşılaştırma:**")
-                st.markdown(f"**Orijinal Paragraf:** `{paragraphs[current_index]}`")
-                st.markdown(f"**Sizin Okumanız:** `{spoken_text}`")
-
         with col3:
             if st.button("Önceki"):
                 if current_index > 0:
@@ -241,3 +220,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
