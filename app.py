@@ -88,25 +88,28 @@ def read_paragraph(paragraph):
     except Exception as e:
         st.error(f"Paragraf oynatılamadı: {e}")
 
+import os
+import streamlit as st
+from TTS.api import TTS
+import torch
+
 def play_word(word):
     try:
-        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=torch.cuda.is_available())
+        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC",
+                  progress_bar=False,
+                  gpu=torch.cuda.is_available())
         audio_path = "temp_word.wav"
         tts.tts_to_file(text=word, file_path=audio_path)
-        with open(audio_path, "rb") as audio_file:
-            audio_base64 = base64.b64encode(audio_file.read()).decode("utf-8")
-        os.remove(audio_path)
-        #audio_html = f"""
-        #<audio controls autoplay>
-        #    <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
-        #    Tarayıcınız ses oynatmayı desteklemiyor.
-        #</audio>
-        #"""
-        #st.markdown(audio_html, unsafe_allow_html=True)
+
+        # Ses dosyasını oynat
         st.audio(audio_path, format="audio/wav")
+
+        # Ses dosyasını sil
+        os.remove(audio_path)
 
     except Exception as e:
         st.error(f"Telaffuz oynatılamadı: {e}")
+
 
 def translate_word(word):
     try:
