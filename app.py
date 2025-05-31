@@ -88,10 +88,10 @@ def read_paragraph(paragraph):
     except Exception as e:
         st.error(f"Paragraf oynatılamadı: {e}")
 
-import os
-import streamlit as st
-from TTS.api import TTS
-import torch
+#import os
+#import streamlit as st
+#from TTS.api import TTS
+#import torch
 
 def play_word(word):
     try:
@@ -119,6 +119,8 @@ def translate_word(word):
 
 def translate_paragraph(paragraph):
     try:
+        if not paragraph.strip():
+            return "Çevrilecek metin bulunamadı."
         return GoogleTranslator(source='en', target='tr').translate(paragraph)
     except Exception as e:
         return f"Paragraf çevirisi yapılamadı: {e}"
@@ -185,8 +187,12 @@ def main():
         st.subheader(f"Paragraf {current_index + 1}/{len(paragraphs)}")
         st.write(paragraphs[current_index])
 
+        #if st.button("Paragrafı Çevir"):
+        #    st.session_state["translated_paragraph"] = translate_paragraph(paragraphs[current_index])
         if st.button("Paragrafı Çevir"):
-            st.session_state["translated_paragraph"] = translate_paragraph(paragraphs[current_index])
+            with st.spinner("Paragraf çeviriliyor... Lütfen bekleyin."):
+                st.session_state["translated_paragraph"] = translate_paragraph(paragraphs[current_index])
+
 
         if st.session_state["translated_paragraph"]:
             st.write("**Çevrilmiş Paragraf (Türkçe):**")
