@@ -1,8 +1,25 @@
-Test deploy triger
-Test deploy trigger at 19:49 May 29, 2025
-Test deploy trigger at 19:59 May 29, 2025
-Test deploy at 22:43 May 29, 2025 
-Test deploy at 22:43 May 29, 2025
-Test deploy trigger at 07:17 May 30, 2025
-## Not
-Yeniden deploy testi - 30 Mayıs 2025
+# 🎙️ Sesle Okuma Modülü (Streamlit)
+
+Bu uygulama, İngilizce metinleri sesli okuma, anlama ve çeviri odaklı bir dil çalışma aracıdır. Özellikle bireysel öğrenme için uygundur ve tarayıcı üzerinden çalışır.
+
+---
+
+## 🚀 Özellikler
+
+- 📚 **Belirli konu numarasına göre metin çağırma** (`OCR_Ana_Cikti_Guncel.docx` üzerinden)
+- 📖 **Paragraf paragraf görüntüleme**
+- 🔊 **Paragrafı sesli oynatma** (gTTS ile)
+- 🧠 **İngilizce-Türkçe kelime çevirisi**
+- 🗣️ **Kelime telaffuzu dinleme**
+- 🌐 **Paragrafı Türkçeye çevirme**
+- 🔄 **Sonraki/önceki paragraf gezintisi**
+
+---
+
+## 🧰 Kurulum
+
+### 1. Gerekli paketler:
+
+```bash
+pip install -r requirements.txt
+
