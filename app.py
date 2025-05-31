@@ -36,11 +36,12 @@ def sesle_oku():
         return render_template_string("""
             <h1>Sesle Oku</h1>
             <p><b>Paragraf:</b> {{ paragraph }}</p>
+            {% raw %}
             <script>
-                setTimeout(function() {{
+                setTimeout(function() {
                     document.getElementById("konus").style.display = "block";
                     document.getElementById("buttons").style.display = "block";
-                }}, 3000);
+                }, 3000);
             </script>
             <div id="konus" style="display:none;">
                 <p><b>Konuş</b></p>
@@ -54,20 +55,20 @@ def sesle_oku():
                 let mediaRecorder;
                 let audioChunks = [];
                 
-                async function startRecording() {{
-                    try {{
+                async function startRecording() {
+                    try {
                         const stream = await navigator.mediaDevices.getUserMedia({{ audio: true }});
                         mediaRecorder = new MediaRecorder(stream);
                         mediaRecorder.start();
                         audioChunks = [];
                         mediaRecorder.addEventListener("dataavailable", event => {{
                             audioChunks.push(event.data);
-                        }});
-                        mediaRecorder.addEventListener("stop", () => {{
-                            const audioBlob = new Blob(audioChunks, {{ type: "audio/wav" }});
+                        });
+                        mediaRecorder.addEventListener("stop", () => {
+                            const audioBlob = new Blob(audioChunks, { type: "audio/wav" }});
                             const reader = new FileReader();
                             reader.readAsDataURL(audioBlob);
-                            reader.onloadend = () => {{
+                            reader.onloadend = () => {
                                 const base64data = reader.result.split(',')[1];
                                 const form = document.createElement("form");
                                 form.method = "POST";
@@ -79,18 +80,19 @@ def sesle_oku():
                                 form.appendChild(input);
                                 document.body.appendChild(form);
                                 form.submit();
-                            }});
-                        }});
+                            };
+                        });
                         document.getElementById("stopButton").disabled = false;
-                    }} catch (err) {{
+                    } catch (err) {
                         alert("Hata oluştu: " + err);
-                    }}
-                }}
-                function stopRecording() {{
+                    }
+                }
+                function stopRecording() {
                     mediaRecorder.stop();
                     document.getElementById("stopButton").disabled = true;
-                }}
+                }
             </script>
+            {% endraw %}		
         """, paragraph=paragraph, return_url=return_url)
     except Exception as e:
         return f"Error: {str(e)}", 500
