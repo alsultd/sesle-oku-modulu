@@ -8,8 +8,7 @@ import time
 from deep_translator import GoogleTranslator
 import pronouncing
 import base64
-import torch
-from TTS.api import TTS
+from gtts import gTTS
 
 # Sabitler
 ERROR_THRESHOLD = 0.3
@@ -65,22 +64,22 @@ def evaluate_speech(original, spoken):
 def read_paragraph(paragraph):
     current_time = time.time()
     last_time = st.session_state.get("last_tts_time", 0)
-    if current_time - last_time < 10:
+    if current_time - last_time < 5:
         st.warning("Sesli oynatma işlemi çok sık tekrarlandı. Lütfen birkaç saniye bekleyin.")
         return
 
     st.session_state["last_tts_time"] = current_time
 
     try:
-        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=torch.cuda.is_available())
-        audio_path = "temp_output.wav"
-        tts.tts_to_file(text=paragraph, file_path=audio_path)
+        tts = gTTS(text=paragraph, lang='en')
+        audio_path = "temp_output.mp3"
+        tts.save(audio_path)
         with open(audio_path, "rb") as audio_file:
             audio_base64 = base64.b64encode(audio_file.read()).decode("utf-8")
         os.remove(audio_path)
         audio_html = f"""
         <audio controls autoplay>
-            <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
+            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
             Tarayıcınız ses oynatmayı desteklemiyor.
         </audio>
         """
@@ -88,23 +87,17 @@ def read_paragraph(paragraph):
     except Exception as e:
         st.error(f"Paragraf oynatılamadı: {e}")
 
-#import os
-#import streamlit as st
-#from TTS.api import TTS
-#import torch
-
 def play_word(word):
     try:
-        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC",
-                  progress_bar=False,
-                  gpu=torch.cuda.is_available())
-        audio_path = "temp_word.wav"
-        tts.tts_to_file(text=word, file_path=audio_path)
+        tts = gTTS(text=word, lang='en')
+        audio_path = "temp_word.mp3"
+        tts.save(audio_path)
 
-        # Ses dosyasını oynat
-        st.audio(audio_path, format="audio/wav")
+        # Ses çalar Streamlit bileşeni
+        st.audio(audio_path, format="audio/mp3")
 
-        # Ses dosyasını sil
+        # Kullanıcı ses çaldıktan sonra dosyayı temizlemesi önerilir
+        time.sleep(1)  # mobilde çalınmadan hemen silinirse hata verir
         os.remove(audio_path)
 
     except Exception as e:
@@ -119,8 +112,6 @@ def translate_word(word):
 
 def translate_paragraph(paragraph):
     try:
-        if not paragraph.strip():
-            return "Çevrilecek metin bulunamadı."
         return GoogleTranslator(source='en', target='tr').translate(paragraph)
     except Exception as e:
         return f"Paragraf çevirisi yapılamadı: {e}"
@@ -187,12 +178,9 @@ def main():
         st.subheader(f"Paragraf {current_index + 1}/{len(paragraphs)}")
         st.write(paragraphs[current_index])
 
-        #if st.button("Paragrafı Çevir"):
-        #    st.session_state["translated_paragraph"] = translate_paragraph(paragraphs[current_index])
         if st.button("Paragrafı Çevir"):
             with st.spinner("Paragraf çeviriliyor... Lütfen bekleyin."):
                 st.session_state["translated_paragraph"] = translate_paragraph(paragraphs[current_index])
-
 
         if st.session_state["translated_paragraph"]:
             st.write("**Çevrilmiş Paragraf (Türkçe):**")
