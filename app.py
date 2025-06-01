@@ -191,9 +191,12 @@ def main():
         for i, word in enumerate(paragraphs[current_index].split()):
             with cols[i % 5]:
                 if st.button(word, key=f"word_{i}_{current_index}"):
-                    st.session_state["selected_word"] = word
-                    st.session_state["translation"] = translate_word(word)
-                    play_word(word)
+                    if st.session_state.get("last_clicked_word") != word:
+                        st.session_state["selected_word"] = word
+                        st.session_state["translation"] = translate_word(word)
+                        play_word(word)
+                        st.session_state["last_clicked_word"] = word
+
 
         if st.session_state["selected_word"]:
             st.info(f"'{st.session_state['selected_word']}' çevirisi: {st.session_state['translation']}")
