@@ -12,7 +12,7 @@ from gtts import gTTS
 
 # Sabitler
 ERROR_THRESHOLD = 0.3
-TOTAL_TOPICS = 152
+TOTAL_TOPICS = 155
 DOCX_FILE_NAME = "OCR_Ana_Cikti_Guncel.docx"
 
 # --- Yardımcı Fonksiyonlar ---
